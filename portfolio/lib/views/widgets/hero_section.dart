@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
+import '../../stores/about_store.dart';
 
 class HeroSection extends StatefulWidget {
   final VoidCallback? onProjectsTap;
@@ -13,6 +14,8 @@ class HeroSection extends StatefulWidget {
 
 class _HeroSectionState extends State<HeroSection>
     with SingleTickerProviderStateMixin {
+  final _aboutStore = AboutStore();
+
   late AnimationController _fadeCtrl;
   late Animation<double> _fadeAnim;
   late Animation<Offset> _slideAnim;
@@ -42,6 +45,7 @@ class _HeroSectionState extends State<HeroSection>
     ).animate(CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut));
     _fadeCtrl.forward();
 
+    _aboutStore.load();
     Future.delayed(const Duration(milliseconds: 700), _startTyping);
 
     _cursorTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
@@ -299,10 +303,12 @@ class _HeroSectionState extends State<HeroSection>
             _OutlineButton(
               label: 'Baixar CV',
               icon: Icons.download_rounded,
-              onTap: () => launchUrl(
-                Uri.parse('https://drive.google.com/seu-cv-aqui'),
-                mode: LaunchMode.externalApplication,
-              ),
+              onTap: () {
+                final cvUrl = _aboutStore.data.value?['cv_url'] as String?;
+                if (cvUrl != null && cvUrl.isNotEmpty) {
+                  launchUrl(Uri.parse(cvUrl), mode: LaunchMode.externalApplication);
+                }
+              },
             ),
           ],
         ),
