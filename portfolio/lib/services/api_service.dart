@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const _baseUrl = 'http://localhost:3000/api';
+  static const _baseUrl = 'https://alexportfolio.up.railway.app/api';
   static const _tokenKey = 'admin_token';
 
   // ── Token ─────────────────────────────────────────────
