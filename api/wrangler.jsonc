@@ -12,9 +12,7 @@
     {
       "binding": "DB",
       "database_name": "portfolio-db",
-      // Placeholder — replace with the real UUID after running:
-      //   wrangler d1 create portfolio-db
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "58ba7525-8f1d-4aae-8d26-3e61dc4166d6",
       "migrations_dir": "migrations"
     }
   ],
