@@ -6,7 +6,7 @@
   "vars": {
     // Comma-separated list of extra allowed CORS origins (besides localhost, which is
     // always allowed). Replace with your real Cloudflare Pages domain before deploying.
-    "ALLOWED_ORIGINS": "https://your-portfolio.pages.dev"
+    "ALLOWED_ORIGINS": "https://portfolio.cigoli.workers.dev"
   },
   "d1_databases": [
     {
