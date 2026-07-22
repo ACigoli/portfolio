@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "portfolio-api",
+  "main": "src/index.js",
+  "compatibility_date": "2025-07-22",
+  "vars": {
+    // Comma-separated list of extra allowed CORS origins (besides localhost, which is
+    // always allowed). Replace with your real Cloudflare Pages domain before deploying.
+    "ALLOWED_ORIGINS": "https://your-portfolio.pages.dev"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "portfolio-db",
+      // Placeholder — replace with the real UUID after running:
+      //   wrangler d1 create portfolio-db
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

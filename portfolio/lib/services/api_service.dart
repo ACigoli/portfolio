@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../core/config/env.dart';
 
 class ApiService {
-  static const _baseUrl = 'https://alexportfolio.up.railway.app/api';
+  static const _baseUrl = Env.apiBaseUrl;
   static const _tokenKey = 'admin_token';
 
   // ── Token ─────────────────────────────────────────────
