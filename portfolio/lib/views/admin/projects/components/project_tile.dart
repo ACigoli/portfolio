@@ -18,12 +18,25 @@ class ProjectTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final techs = project['technologies'] as List? ?? [];
+    final images = project['images'] as List? ?? [];
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GlassCard(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (images.isNotEmpty) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadius.sm),
+                child: Image.network(
+                  images.first as String,
+                  width: 56,
+                  height: 56,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 14),
+            ],
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

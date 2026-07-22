@@ -185,6 +185,11 @@ class _ProjectCardState extends State<_ProjectCard> {
                 ),
               ),
             ),
+            if (widget.project.images.isNotEmpty)
+              _ProjectCover(
+                images: widget.project.images,
+                accent: accent,
+              ),
             Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
@@ -270,6 +275,184 @@ class _ProjectCardState extends State<_ProjectCard> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Cover image for a project card — the first screenshot, tappable to open
+/// the full gallery. Shown only for projects that have at least one image
+/// (e.g. private/closed-source projects standing in for a live demo).
+class _ProjectCover extends StatefulWidget {
+  final List<String> images;
+  final Color accent;
+  const _ProjectCover({required this.images, required this.accent});
+
+  @override
+  State<_ProjectCover> createState() => _ProjectCoverState();
+}
+
+class _ProjectCoverState extends State<_ProjectCover> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: () => _openGallery(context, widget.images),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              Image.network(widget.images.first, fit: BoxFit.cover),
+              AnimatedOpacity(
+                opacity: _hovered ? 1 : 0,
+                duration: AppMotion.fast,
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.zoom_in_rounded, color: Colors.white, size: 18),
+                      const SizedBox(width: 6),
+                      Text(
+                        widget.images.length > 1 ? 'Ver ${widget.images.length} fotos' : 'Ver imagem',
+                        style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void _openGallery(BuildContext context, List<String> images) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.black.withValues(alpha: 0.88),
+    builder: (_) => _GalleryLightbox(images: images),
+  );
+}
+
+class _GalleryLightbox extends StatefulWidget {
+  final List<String> images;
+  const _GalleryLightbox({required this.images});
+
+  @override
+  State<_GalleryLightbox> createState() => _GalleryLightboxState();
+}
+
+class _GalleryLightboxState extends State<_GalleryLightbox> {
+  late final PageController _controller;
+  int _page = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(24),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 700),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppRadius.lg),
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: widget.images.length,
+                onPageChanged: (i) => setState(() => _page = i),
+                itemBuilder: (_, i) => InteractiveViewer(
+                  child: Image.network(widget.images[i], fit: BoxFit.contain),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: const Icon(Icons.close_rounded, color: Colors.white, size: 28),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          if (widget.images.length > 1) ...[
+            Positioned(
+              left: 4,
+              child: _LightboxArrow(
+                icon: Icons.chevron_left_rounded,
+                onTap: _page > 0
+                    ? () => _controller.previousPage(
+                        duration: AppMotion.medium, curve: AppMotion.easeOut)
+                    : null,
+              ),
+            ),
+            Positioned(
+              right: 4,
+              child: _LightboxArrow(
+                icon: Icons.chevron_right_rounded,
+                onTap: _page < widget.images.length - 1
+                    ? () => _controller.nextPage(
+                        duration: AppMotion.medium, curve: AppMotion.easeOut)
+                    : null,
+              ),
+            ),
+            Positioned(
+              bottom: 12,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(widget.images.length, (i) {
+                  return AnimatedContainer(
+                    duration: AppMotion.fast,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    width: i == _page ? 20 : 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: i == _page ? AppColors.primary : Colors.white38,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
+                    ),
+                  );
+                }),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _LightboxArrow extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback? onTap;
+  const _LightboxArrow({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: Icon(icon, color: onTap == null ? Colors.white24 : Colors.white, size: 32),
+      onPressed: onTap,
     );
   }
 }

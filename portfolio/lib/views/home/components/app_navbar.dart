@@ -70,7 +70,7 @@ class _AppNavBarState extends State<AppNavBar> {
     final isWide = MediaQuery.of(context).size.width > 700;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 18, left: 16, right: 16),
+      padding: const EdgeInsets.only(top: 14, left: 16, right: 16),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 960),
@@ -80,14 +80,14 @@ class _AppNavBarState extends State<AppNavBar> {
               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface.withValues(alpha: 0.62),
+                  color: AppColors.surface.withValues(alpha: 0.82),
                   borderRadius: BorderRadius.circular(AppRadius.full),
-                  border: Border.all(color: AppColors.hairline),
+                  border: Border.all(color: AppColors.hairlineStrong),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.28),
-                      blurRadius: 24,
-                      offset: const Offset(0, 10),
+                      color: Colors.black.withValues(alpha: 0.35),
+                      blurRadius: 28,
+                      offset: const Offset(0, 12),
                     ),
                   ],
                 ),

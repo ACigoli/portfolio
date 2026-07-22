@@ -77,6 +77,28 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           // ── Fundo animado compartilhado ─────────────────────────
           const Positioned.fill(child: AnimatedBackground()),
+          // ── Véu no topo — ancora visualmente a nav flutuante ao fundo,
+          // em vez de deixá-la "sozinha" sobre a área mais clara do hero.
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 160,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColors.background.withValues(alpha: 0.7),
+                      AppColors.background.withValues(alpha: 0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
           // ── Conteúdo scrollável ─────────────────────────────────
           SingleChildScrollView(
             controller: _scrollController,

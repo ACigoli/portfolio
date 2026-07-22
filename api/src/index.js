@@ -9,6 +9,7 @@ import experienceRoutes from './routes/experience.routes.js';
 import contactRoutes from './routes/contact.routes.js';
 import servicesRoutes from './routes/services.routes.js';
 import educationRoutes from './routes/education.routes.js';
+import mediaRoutes from './routes/media.routes.js';
 
 const app = new Hono();
 
@@ -46,6 +47,7 @@ app.route('/api/experience', experienceRoutes);
 app.route('/api/contact', contactRoutes);
 app.route('/api/services', servicesRoutes);
 app.route('/api/education', educationRoutes);
+app.route('/api/media', mediaRoutes);
 
 // Health check
 app.get('/api/health', (c) => c.json({ status: 'ok', message: 'API Portfolio rodando' }));

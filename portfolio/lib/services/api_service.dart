@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/config/env.dart';
 
@@ -262,6 +264,36 @@ class ApiService {
   static Future<void> deleteMessage(int id) async {
     await http.delete(
       Uri.parse('$_baseUrl/contact/$id'),
+      headers: await _headers(auth: true),
+    );
+  }
+
+  // ── Media (R2) ────────────────────────────────────────
+  static Future<String> uploadImage(
+    Uint8List bytes,
+    String filename,
+    String contentType,
+  ) async {
+    final token = await getToken();
+    final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/media/upload'))
+      ..headers.addAll(token != null ? {'Authorization': 'Bearer $token'} : {})
+      ..files.add(http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: filename,
+        contentType: MediaType.parse(contentType),
+      ));
+    final streamed = await request.send();
+    final res = await http.Response.fromStream(streamed);
+    if (streamed.statusCode != 201) {
+      throw Exception(jsonDecode(res.body)['error'] ?? 'Erro ao enviar imagem');
+    }
+    return jsonDecode(res.body)['url'] as String;
+  }
+
+  static Future<void> deleteImage(String key) async {
+    await http.delete(
+      Uri.parse('$_baseUrl/media/$key'),
       headers: await _headers(auth: true),
     );
   }

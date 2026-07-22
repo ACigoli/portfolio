@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../shared/widgets/glass_card.dart';
 import '../../../shared/widgets/pill_button.dart';
 import '../store/about_store.dart';
 
@@ -265,10 +264,10 @@ class _HeroSectionState extends State<HeroSection>
           spacing: 8,
           runSpacing: 8,
           children: [
-            _TechChip(label: 'Flutter'),
-            _TechChip(label: 'Dart'),
-            _TechChip(label: 'Firebase'),
-            _TechChip(label: 'REST API'),
+            _TechChip(label: 'Flutter', icon: Icons.widgets_rounded),
+            _TechChip(label: 'Dart', icon: Icons.code_rounded),
+            _TechChip(label: 'Firebase', icon: Icons.local_fire_department_rounded),
+            _TechChip(label: 'REST API', icon: Icons.api_rounded),
           ],
         ),
         const SizedBox(height: 28),
@@ -981,21 +980,50 @@ class _GlowOrb extends StatelessWidget {
   );
 }
 
-class _TechChip extends StatelessWidget {
+class _TechChip extends StatefulWidget {
   final String label;
-  const _TechChip({required this.label});
+  final IconData icon;
+  const _TechChip({required this.label, required this.icon});
+
+  @override
+  State<_TechChip> createState() => _TechChipState();
+}
+
+class _TechChipState extends State<_TechChip> {
+  bool _hovered = false;
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      outerRadius: AppRadius.lg,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppColors.text,
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: AppMotion.fast,
+        curve: AppMotion.easeOut,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: BoxDecoration(
+          color: _hovered
+              ? AppColors.primary.withValues(alpha: 0.08)
+              : Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(AppRadius.full),
+          border: Border.all(
+            color: _hovered ? AppColors.primary.withValues(alpha: 0.4) : AppColors.hairline,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(widget.icon, size: 14, color: AppColors.primary),
+            const SizedBox(width: 7),
+            Text(
+              widget.label,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );

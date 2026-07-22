@@ -7,6 +7,7 @@ function parseProject(project) {
   return {
     ...project,
     technologies: JSON.parse(project.technologies),
+    images: JSON.parse(project.images || '[]'),
     featured: Boolean(project.featured),
   };
 }
@@ -25,16 +26,16 @@ projects.get('/:id', async (c) => {
 
 projects.post('/', authMiddleware, async (c) => {
   const body = await c.req.json().catch(() => ({}));
-  const { title, description, category, technologies, github_url, live_url, image_url, featured, order_index } = body;
+  const { title, description, category, technologies, github_url, live_url, image_url, images, featured, order_index } = body;
   if (!title || !description || !category || !technologies) {
     return c.json({ error: 'Campos obrigatórios: title, description, category, technologies' }, 400);
   }
   const result = await c.env.DB.prepare(`
-    INSERT INTO projects (title, description, category, technologies, github_url, live_url, image_url, featured, order_index)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO projects (title, description, category, technologies, github_url, live_url, image_url, images, featured, order_index)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).bind(
     title, description, category, JSON.stringify(technologies),
-    github_url || null, live_url || null, image_url || null,
+    github_url || null, live_url || null, image_url || null, JSON.stringify(images || []),
     featured ? 1 : 0, order_index || 0
   ).run();
 
@@ -48,11 +49,11 @@ projects.put('/:id', authMiddleware, async (c) => {
   if (!existing) return c.json({ error: 'Projeto não encontrado' }, 404);
 
   const body = await c.req.json().catch(() => ({}));
-  const { title, description, category, technologies, github_url, live_url, image_url, featured, order_index } = body;
+  const { title, description, category, technologies, github_url, live_url, image_url, images, featured, order_index } = body;
 
   await c.env.DB.prepare(`
     UPDATE projects SET title = ?, description = ?, category = ?, technologies = ?,
-    github_url = ?, live_url = ?, image_url = ?, featured = ?, order_index = ?
+    github_url = ?, live_url = ?, image_url = ?, images = ?, featured = ?, order_index = ?
     WHERE id = ?
   `).bind(
     title ?? existing.title,
@@ -62,6 +63,7 @@ projects.put('/:id', authMiddleware, async (c) => {
     github_url ?? existing.github_url,
     live_url ?? existing.live_url,
     image_url ?? existing.image_url,
+    images ? JSON.stringify(images) : existing.images,
     featured !== undefined ? (featured ? 1 : 0) : existing.featured,
     order_index ?? existing.order_index,
     id

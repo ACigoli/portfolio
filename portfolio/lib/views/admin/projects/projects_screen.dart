@@ -78,6 +78,7 @@ class _ProjectsAdminScreenState extends State<ProjectsAdminScreen> {
                     'technologies': p.technologies,
                     'github_url': p.githubUrl,
                     'live_url': p.liveUrl,
+                    'images': p.images,
                   };
                   return ProjectTile(
                     project: raw,
